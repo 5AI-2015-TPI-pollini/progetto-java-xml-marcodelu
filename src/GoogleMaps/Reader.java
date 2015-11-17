@@ -1,5 +1,6 @@
-package deluweather;
+package GoogleMaps;
 
+import GoogleMaps.Coordinate;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -26,10 +27,10 @@ import org.xml.sax.SAXException;
  *
  * @author Marco De Lucchi <marcodelucchi27@gmail.com>
  */
-public class GMapsReader {
+public class Reader {
     Coordinate CoordinateResult;
     
-    public GMapsReader(String address){
+    public Reader(String address){
         interpreter(getConnection(address));
         printCoordinate();
     }
@@ -39,7 +40,7 @@ public class GMapsReader {
         String finalUrl = "http://maps.googleapis.com/maps/api/geocode/xml?address=";
         //Spaces must be replaced by + for a valid url
         finalUrl+=address.replace(" ", "+");
-        System.out.println(finalUrl);
+        //System.out.println(finalUrl);
         return finalUrl;
     }
             
@@ -57,9 +58,9 @@ public class GMapsReader {
             InputStream result = new BufferedInputStream(URLConnectionGMaps.getInputStream());
             return result;
         } catch (MalformedURLException ex) {
-            Logger.getLogger(GMapsReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(GMapsReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
         }
     return null;
     }
@@ -89,18 +90,17 @@ public class GMapsReader {
             CoordinateResult = new Coordinate(coordinatesList.item(0).getNodeValue(), coordinatesList.item(1).getNodeValue());
             
         } catch (ParserConfigurationException ex) {
-            Logger.getLogger(GMapsReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SAXException ex) {
-                Logger.getLogger(GMapsReader.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-                Logger.getLogger(GMapsReader.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
         } catch (XPathExpressionException ex) {
-            Logger.getLogger(GMapsReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-        private void printCoordinate()
-        {
-            System.out.println(CoordinateResult);
-        }
+    private void printCoordinate(){
+        System.out.println(CoordinateResult);
+    }
 }

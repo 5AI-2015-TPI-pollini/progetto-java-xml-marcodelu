@@ -1,4 +1,4 @@
-package deluweather;
+package GoogleMaps;
 
 /**
  *
