@@ -3,6 +3,7 @@ package Maps;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import static java.lang.System.exit;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -27,7 +28,7 @@ import org.xml.sax.SAXException;
 public class Reader {
     Coordinate CoordinateResult;
     private static final String QUERY_STATUS = "/GeocodeResponse/status/text()";
-    private static final String QUERY_STATUS_FAIL = "ZERO_RESULT";
+    private static final String QUERY_STATUS_FAIL = "ZERO_RESULTS";
     private static final String QUERY_LATITUDE = "/GeocodeResponse/result/geometry/location/lat/text()";
     private static final String QUERY_LONGITUDE = "/GeocodeResponse/result/geometry/location/lng/text()";
     private static final String GEOCODE_URL = "http://maps.googleapis.com/maps/api/geocode/xml?address=";
@@ -77,9 +78,10 @@ public class Reader {
             //Ckecking if found something
             XPathExpression statusExpression = xpath.compile(QUERY_STATUS);
             String status = (String) statusExpression.evaluate(doc, XPathConstants.STRING);
+            System.out.println(status);
             if(status.equals(QUERY_STATUS_FAIL)){
                 System.out.println("Sorry. Nothing found :-(");
-                return;
+                exit(1);
             }
             
             //Getting coordinates

@@ -28,7 +28,6 @@ public class Reader {
     private Coordinate CoordinatePlace;
     private State WeatherNow = null;
     private static final String OPENWEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?mode=xml";
-    private static final String QUERY_CURRENT_STATE = "/current/city[\"value\"]/text()";
     private static final String APIKEY = "234af59ed708dd86329f3f939e130a80";
     
     public Reader (Coordinate CoordinatePlace){
