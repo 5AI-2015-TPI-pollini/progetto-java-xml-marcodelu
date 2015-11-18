@@ -1,11 +1,8 @@
-package GoogleMaps;
+package Maps;
 
-import GoogleMaps.Coordinate;
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -29,6 +26,11 @@ import org.xml.sax.SAXException;
  */
 public class Reader {
     Coordinate CoordinateResult;
+    private static final String QUERY_STATUS = "/GeocodeResponse/status/text()";
+    private static final String QUERY_STATUS_FAIL = "ZERO_RESULT";
+    private static final String QUERY_LATITUDE = "/GeocodeResponse/result/geometry/location/lat/text()";
+    private static final String QUERY_LONGITUDE = "/GeocodeResponse/result/geometry/location/lng/text()";
+    private static final String GEOCODE_URL = "http://maps.googleapis.com/maps/api/geocode/xml?address=";
     
     public Reader(String address){
         interpreter(getConnection(address));
@@ -37,11 +39,8 @@ public class Reader {
     
     //Get the correct url for Google Maps from the address specified by the user
     private String getValidUrl(String address){
-        String finalUrl = "http://maps.googleapis.com/maps/api/geocode/xml?address=";
         //Spaces must be replaced by + for a valid url
-        finalUrl+=address.replace(" ", "+");
-        //System.out.println(finalUrl);
-        return finalUrl;
+        return GEOCODE_URL+address.replace(" ", "+");
     }
             
     //Set proxy
@@ -52,7 +51,7 @@ public class Reader {
     //Open connection with Google Maps
     private InputStream getConnection(String address){
         try {
-            //BresetProxy();
+            //setProxy();
             URL URLGMaps = new URL(getValidUrl(address));
             URLConnection URLConnectionGMaps = URLGMaps.openConnection();
             InputStream result = new BufferedInputStream(URLConnectionGMaps.getInputStream());
@@ -76,25 +75,25 @@ public class Reader {
             XPath xpath = xpathFactory.newXPath();
             
             //Ckecking if found something
-            XPathExpression statusExpression = xpath.compile("/GeocodeResponse/status/text()");
+            XPathExpression statusExpression = xpath.compile(QUERY_STATUS);
             String status = (String) statusExpression.evaluate(doc, XPathConstants.STRING);
-            if(status.equals("ZERO_RESULTS")){
+            if(status.equals(QUERY_STATUS_FAIL)){
                 System.out.println("Sorry. Nothing found :-(");
                 return;
             }
             
             //Getting coordinates
-            XPathExpression coordinatesExpression = xpath.compile("/GeocodeResponse/result/geometry/location[1]/lat/text() | "
-                    + "/GeocodeResponse/result/geometry/location[1]/lng/text()");
-            NodeList coordinatesList = (NodeList) coordinatesExpression.evaluate(doc, XPathConstants.NODESET);
-            CoordinateResult = new Coordinate(coordinatesList.item(0).getNodeValue(), coordinatesList.item(1).getNodeValue());
-            
+            XPathExpression lat = xpath.compile(QUERY_LATITUDE);
+            XPathExpression lon = xpath.compile(QUERY_LONGITUDE);
+            NodeList lats = (NodeList) lat.evaluate(doc, XPathConstants.NODESET);
+            NodeList lons = (NodeList) lon.evaluate(doc, XPathConstants.NODESET);
+            CoordinateResult = new Coordinate(lats.item(0).getNodeValue(), lons.item(0).getNodeValue()); 
         } catch (ParserConfigurationException ex) {
             Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SAXException ex) {
-                Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-                Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
         } catch (XPathExpressionException ex) {
             Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -102,5 +101,9 @@ public class Reader {
     
     private void printCoordinate(){
         System.out.println(CoordinateResult);
+    }
+    
+    public Coordinate getCoordinate(){
+        return CoordinateResult;
     }
 }

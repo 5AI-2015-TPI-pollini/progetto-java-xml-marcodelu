@@ -1,6 +1,5 @@
 package deluweather;
 
-import GoogleMaps.Reader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -18,7 +17,8 @@ public class DeluWeather {
             //Leggo input
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             String address = br.readLine();
-            Reader GMR = new Reader(address);
+            Maps.Reader GMR = new Maps.Reader(address);
+            Weather.Reader OPW = new Weather.Reader(GMR.getCoordinate());
         } catch (IOException ex) {
             Logger.getLogger(DeluWeather.class.getName()).log(Level.SEVERE, null, ex);
         }
