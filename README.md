@@ -1,2 +1,0 @@
-# DeluWeather
-Java 
