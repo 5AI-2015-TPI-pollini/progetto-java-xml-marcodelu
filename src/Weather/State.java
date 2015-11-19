@@ -22,11 +22,11 @@ public class State {
     
     @Override
     public String toString(){
-        return  "Temperature: " + temperature + "\n" +
+        return  "Temperature: " + temperature.toString().substring(0, 5) + "\n" +
                 "Description: " + description + "\n" +
                 //"Minimum: " + temperatureMin +
                 //" Maximum: " + temperatureMax + "\n" +
-                "Humidity: " + humidity +
+                "Humidity: " + humidity + "%" +
                 " Pressure: " + pressure + "hPa\n" +
                 "Wind: " + wind;
     }

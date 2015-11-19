@@ -61,9 +61,8 @@ public class Reader {
             //Ckecking if found something
             XPathExpression statusExpression = xpath.compile(QUERY_STATUS);
             String status = (String) statusExpression.evaluate(doc, XPathConstants.STRING);
-            System.out.println(status);
             if(status.equals(QUERY_STATUS_FAIL)){
-                System.out.println("Sorry. Nothing found :-(");
+                System.out.println("Sorry, nothing found. Please check the address and try again.");
                 exit(1);
             }
             
@@ -73,14 +72,11 @@ public class Reader {
             NodeList lats = (NodeList) lat.evaluate(doc, XPathConstants.NODESET);
             NodeList lons = (NodeList) lon.evaluate(doc, XPathConstants.NODESET);
             CoordinateResult = new Coordinate(lats.item(0).getNodeValue(), lons.item(0).getNodeValue()); 
-        } catch (ParserConfigurationException ex) {
+        } catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException ex) {
+            System.out.println("There was a problem retrieving data from Google Maps. Sorry!");
+            System.out.println("Here some data for nerds:");
             Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SAXException ex) {
-            Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (XPathExpressionException ex) {
-            Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
+            exit(2);
         }
     }
     
