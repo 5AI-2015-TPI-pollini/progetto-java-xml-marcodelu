@@ -23,5 +23,4 @@ public class DeluWeather {
             Logger.getLogger(DeluWeather.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
 }
