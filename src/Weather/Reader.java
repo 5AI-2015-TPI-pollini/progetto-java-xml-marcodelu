@@ -20,6 +20,7 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import Http.Connection;
 /**
  *
  * @author Marco De Lucchi <marcodelucchi27@gmail.com>
@@ -28,11 +29,11 @@ public class Reader {
     private Coordinate CoordinatePlace;
     private State WeatherNow = null;
     private static final String OPENWEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?mode=xml";
-    private static final String APIKEY = "234af59ed708dd86329f3f939e130a80";
+    private static final String APIKEY = "";
     
     public Reader (Coordinate CoordinatePlace){
         this.CoordinatePlace = CoordinatePlace;
-        interpreter(getConnection());
+        interpreter();
     }
     
     private String getValidUrl(){
@@ -42,26 +43,12 @@ public class Reader {
                 "&appid=" + APIKEY;
     }
     
-    private InputStream getConnection(){
+    private void interpreter(){
         try {
-            URL URLOpenWeather = new URL(getValidUrl());
-            System.out.println(getValidUrl());
-            URLConnection URLConnectionOpenWeather = URLOpenWeather.openConnection();
-            InputStream result = new BufferedInputStream(URLConnectionOpenWeather.getInputStream());
-            return result;
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
-    
-    private void interpreter(InputStream result){
-        try {
+            Connection OpenWeather = new Connection (getValidUrl());
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(result);
+            Document doc = builder.parse(OpenWeather.getConnection());
             
             XPathFactory xpathFactory = XPathFactory.newInstance();
             XPath xpath = xpathFactory.newXPath();
@@ -72,13 +59,15 @@ public class Reader {
             XPathExpression humidityExp = xpath.compile("/current/humidity/@value");
             XPathExpression pressureExp = xpath.compile("/current/pressure/@value");
             XPathExpression windExp = xpath.compile("/current/wind/speed/@name");
+            XPathExpression weatherExp = xpath.compile("/current/weather/@value");
             
             WeatherNow = new State((String)tempExp.evaluate(doc, XPathConstants.STRING),
                 (String)minExp.evaluate(doc, XPathConstants.STRING),
                 (String)maxExp.evaluate(doc, XPathConstants.STRING),
                 (String)humidityExp.evaluate(doc, XPathConstants.STRING),
                 (String)pressureExp.evaluate(doc, XPathConstants.STRING),
-                (String)windExp.evaluate(doc, XPathConstants.STRING)
+                (String)windExp.evaluate(doc, XPathConstants.STRING),
+                (String)weatherExp.evaluate(doc, XPathConstants.STRING)
                 );
             System.out.println(WeatherNow);
         } catch (ParserConfigurationException ex) {

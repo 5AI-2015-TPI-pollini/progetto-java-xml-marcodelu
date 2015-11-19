@@ -20,6 +20,7 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import Http.Connection;
 
 /**
  *
@@ -32,45 +33,27 @@ public class Reader {
     private static final String QUERY_LATITUDE = "/GeocodeResponse/result/geometry/location/lat/text()";
     private static final String QUERY_LONGITUDE = "/GeocodeResponse/result/geometry/location/lng/text()";
     private static final String GEOCODE_URL = "http://maps.googleapis.com/maps/api/geocode/xml?address=";
+    private String address;
     
     public Reader(String address){
-        interpreter(getConnection(address));
+        this.address=address;
+        interpreter();
         printCoordinate();
     }
     
     //Get the correct url for Google Maps from the address specified by the user
-    private String getValidUrl(String address){
+    private String getValidUrl(){
         //Spaces must be replaced by + for a valid url
         return GEOCODE_URL+address.replace(" ", "+");
     }
-            
-    //Set proxy
-    private void setProxy(){
-        System.out.println("--PROXY--");
-    }
-    
-    //Open connection with Google Maps
-    private InputStream getConnection(String address){
-        try {
-            //setProxy();
-            URL URLGMaps = new URL(getValidUrl(address));
-            URLConnection URLConnectionGMaps = URLGMaps.openConnection();
-            InputStream result = new BufferedInputStream(URLConnectionGMaps.getInputStream());
-            return result;
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    return null;
-    }
-    
+        
     //Interprets the xml
-    private void interpreter(InputStream result){
+    private void interpreter(){
         try {
+            Connection GMaps = new Connection(getValidUrl());
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(result);
+            Document doc = builder.parse(GMaps.getConnection());
             
             XPathFactory xpathFactory = XPathFactory.newInstance();
             XPath xpath = xpathFactory.newXPath();
