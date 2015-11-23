@@ -7,31 +7,30 @@ package Maps;
 public class Coordinate {
     private Double longitude;
     private Double latitude;
+    private String formattedAddress;
 
-    public Coordinate(String latitude, String longitude) {
+    public Coordinate(String latitude, String longitude, String formattedAddress) {
         this.longitude = Double.parseDouble(longitude);
         this.latitude = Double.parseDouble(latitude);
+        this.formattedAddress = formattedAddress;
     }
 
     public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
-
     public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
+    public String getFormattedAddress() {
+        return formattedAddress;
     }
 
     @Override
     public String toString(){
-        return "Coordinate: longitude= " +longitude + ", latitude: "+latitude;
+        return "Coordinate: longitude= " +longitude + ", latitude= "+latitude +"\n" +
+                "Name: " + formattedAddress;
     }
     
     

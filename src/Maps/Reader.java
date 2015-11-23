@@ -33,9 +33,10 @@ public class Reader {
     private static final String QUERY_LATITUDE = "/GeocodeResponse/result/geometry/location/lat/text()";
     private static final String QUERY_LONGITUDE = "/GeocodeResponse/result/geometry/location/lng/text()";
     private static final String GEOCODE_URL = "http://maps.googleapis.com/maps/api/geocode/xml?address=";
+    private static final String QUERY_ADDRESS = "/GeocodeResponse/result/formatted_address/text()";
     private String address;
     
-    public Reader(String address){
+    public Reader(String address) throws NotFoundException{
         this.address=address;
         interpreter();
         printCoordinate();
@@ -48,8 +49,9 @@ public class Reader {
     }
         
     //Interprets the xml
-    private void interpreter(){
+    private void interpreter() throws NotFoundException{
         try {
+            //System.out.println(getValidUrl());
             Connection GMaps = new Connection(getValidUrl());
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -62,16 +64,17 @@ public class Reader {
             XPathExpression statusExpression = xpath.compile(QUERY_STATUS);
             String status = (String) statusExpression.evaluate(doc, XPathConstants.STRING);
             if(status.equals(QUERY_STATUS_FAIL)){
-                System.out.println("Sorry, nothing found. Please check the address and try again.");
-                exit(1);
+                throw new NotFoundException(address);
             }
             
             //Getting coordinates
             XPathExpression lat = xpath.compile(QUERY_LATITUDE);
             XPathExpression lon = xpath.compile(QUERY_LONGITUDE);
-            NodeList lats = (NodeList) lat.evaluate(doc, XPathConstants.NODESET);
-            NodeList lons = (NodeList) lon.evaluate(doc, XPathConstants.NODESET);
-            CoordinateResult = new Coordinate(lats.item(0).getNodeValue(), lons.item(0).getNodeValue()); 
+            XPathExpression fa = xpath.compile(QUERY_ADDRESS);
+            String lats = (String) lat.evaluate(doc, XPathConstants.STRING);
+            String lons = (String) lon.evaluate(doc, XPathConstants.STRING);
+            String fas = (String) fa.evaluate(doc, XPathConstants.STRING);
+            CoordinateResult = new Coordinate(lats, lons, fas); 
         } catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException ex) {
             System.out.println("There was a problem retrieving data from Google Maps. Sorry!");
             System.out.println("Here some data for nerds:");

@@ -68,6 +68,7 @@ public class Reader {
                 (String)windExp.evaluate(doc, XPathConstants.STRING),
                 (String)weatherExp.evaluate(doc, XPathConstants.STRING)
                 );
+            WeatherNow.setCoordinate(CoordinatePlace);
             System.out.println(WeatherNow);
         } catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException ex) {
             System.out.println("There was a problem retrieving data from Open Weather. Sorry!");
@@ -91,5 +92,9 @@ public class Reader {
            Logger.getLogger(Weather.Reader.class.getName()).log(Level.SEVERE, null, ex);
            exit(2);
         }
+    }
+    
+    public State getState(){
+        return WeatherNow;
     }
 }

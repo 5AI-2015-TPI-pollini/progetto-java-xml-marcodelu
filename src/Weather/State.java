@@ -1,6 +1,9 @@
 package Weather;
 
+import Maps.Coordinate;
+
 public class State {
+    public Coordinate coordinate;
     private Double temperature, temperatureMin, temperatureMax;
     private String humidity, pressure;
     private String wind, description;
@@ -29,5 +32,33 @@ public class State {
                 "Humidity: " + humidity + "%" +
                 " Pressure: " + pressure + "hPa\n" +
                 "Wind: " + wind;
+    }
+
+    public String getTemperature() {
+        return ""+temperature.shortValue()+" °C";
+    }
+
+    public String getHumidity() {
+        return humidity+" %";
+    }
+
+    public String getPressure() {
+        return pressure+" hPa";
+    }
+
+    public String getWind() {
+        return wind;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Coordinate getCoordinate() {
+        return coordinate;
+    }
+
+    public void setCoordinate(Coordinate coordinate) {
+        this.coordinate = coordinate;
     }
 }

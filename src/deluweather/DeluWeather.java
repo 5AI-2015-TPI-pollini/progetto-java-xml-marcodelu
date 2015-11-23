@@ -1,17 +1,49 @@
 package deluweather;
 
+import Maps.NotFoundException;
+import java.awt.Button;
+import java.awt.event.ActionEvent;
+import java.beans.EventHandler;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  *
  * @author Marco De Lucchi <marcodelucchi27@gmail.com>
  */
-public class DeluWeather {
+public class DeluWeather extends Application{
     public static void main(String[] args) {
+        try {
+            launch(args);
+        } catch (Exception ex) {
+            System.out.println("Something went wrong :-(");
+            System.out.println("Can't start graphic.");
+            Logger.getLogger(DeluWeather.class.getName()).log(Level.SEVERE, null, ex);
+            noGraphic();
+        }
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
+        Parent root = FXMLLoader.load(getClass().getResource("WeatherGUI.fxml"));
+        Scene scene = new Scene(root,Color.TRANSPARENT);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+    
+    private static void noGraphic(){
         try {
             System.out.println("Welcome! Please write the address:");
             //Read input
@@ -25,6 +57,9 @@ public class DeluWeather {
             System.out.println("Something went wrong :-(");
             System.out.println("Here some data for nerds:");
             Logger.getLogger(DeluWeather.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NotFoundException ex) {
+            System.out.println("Sorry, nothing found. Please check the address and try again.");
+            noGraphic();
         }
     }
 }
