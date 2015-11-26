@@ -1,6 +1,6 @@
 # DeluWeather
 ## Cos'è
-DeluWeather è frutto di un compito assegnato dal prof. Pollini Andrea per l'anno scolastico 2015/16
+DeluWeather è frutto di un compito assegnato dal prof. Pollini Andrea per l'anno scolastico 2015/16.
 È un programma che riceve dall'utente un indirizzo e controlla le condizioni meteo.
 
 ## Come funziona
