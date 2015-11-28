@@ -1,10 +1,10 @@
 # DeluWeather
-## Cos'è
-DeluWeather è frutto di un compito assegnato dal prof. Pollini Andrea per l'anno scolastico 2015/16.
-È un programma che riceve dall'utente un indirizzo e controlla le condizioni meteo.
+## What is
+DeluWather is the result of a task assigned by Prof. Pollini Andrea for the school year 2015/16.
+It's a program that checks the weather for an address inserted by the user.
 
-## Come funziona
-DeluWeather utilizza le API fornite da Google Maps e OpenWeather per ottenere le infomazioni necessarie in formato XML, successivamente queste vengono mostrate a video attraverso JavaFX
+## How does it work
+DeluWeather works using Google Maps and OpenWeather APIs for retrieving data in XML, after it shows the result on screen using JavaFX.
 
 ## Wiki
-Guida per l'utente: http://github.com/5AI-2015-TPI-pollini/progetto-java-xml-marcodelu/wiki/Guida-per-l'utente
+User's guide: http://github.com/5AI-2015-TPI-pollini/progetto-java-xml-marcodelu/wiki/Guida-per-l'utente
