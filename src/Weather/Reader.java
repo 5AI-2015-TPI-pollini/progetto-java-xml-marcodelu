@@ -1,6 +1,7 @@
 package Weather;
 
 import Maps.Coordinate;
+import Http.Connection;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,39 +20,57 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import static java.lang.System.exit;
+
 /**
+ * Handle Open Weather request
  *
- * @author Marco De Lucchi <marcodelucchi27@gmail.com>
+ * @author Marco De Lucchi
  */
 public class Reader {
-    private Coordinate CoordinatePlace;
+
+    private final Coordinate CoordinatePlace;
     private State WeatherNow = null;
     private static final String OPENWEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?mode=xml";
     private String apikey = "";
-    
-    public Reader (Coordinate CoordinatePlace){
+    private Connection OpenWeather;
+
+    /**
+     * Retrieve weather from Open Weather
+     *
+     * @param CoordinatePlace Coordinate of the place where you want to check
+     * weather
+     */
+    public Reader(Coordinate CoordinatePlace) {
         this.CoordinatePlace = CoordinatePlace;
         readSettings();
         interpreter();
     }
-    
-    private String getValidUrl(){
-        return OPENWEATHER_URL + 
-                "&lat=" + CoordinatePlace.getLatitude() +
-                "&lon=" + CoordinatePlace.getLongitude() +
-                "&appid=" + apikey;
+
+    /**
+     * Get the correct url for Open Weather from the coordinate object
+     *
+     * @return String correct address
+     */
+    private String getValidUrl() {
+        return OPENWEATHER_URL
+                + "&lat=" + CoordinatePlace.getLatitude()
+                + "&lon=" + CoordinatePlace.getLongitude()
+                + "&appid=" + apikey;
     }
-    
-    private void interpreter(){
+
+    /**
+     * Convert XML data for final user
+     */
+    private void interpreter() {
         try {
-            Connection OpenWeather = new Connection (getValidUrl());
+            OpenWeather = new Connection(getValidUrl());
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(OpenWeather.getConnection());
-            
+
             XPathFactory xpathFactory = XPathFactory.newInstance();
             XPath xpath = xpathFactory.newXPath();
-            
+
             XPathExpression tempExp = xpath.compile("/current/temperature/@value");
             XPathExpression minExp = xpath.compile("/current/temperature/@min");
             XPathExpression maxExp = xpath.compile("/current/temperature/@max");
@@ -59,15 +78,15 @@ public class Reader {
             XPathExpression pressureExp = xpath.compile("/current/pressure/@value");
             XPathExpression windExp = xpath.compile("/current/wind/speed/@name");
             XPathExpression weatherExp = xpath.compile("/current/weather/@value");
-            
-            WeatherNow = new State((String)tempExp.evaluate(doc, XPathConstants.STRING),
-                (String)minExp.evaluate(doc, XPathConstants.STRING),
-                (String)maxExp.evaluate(doc, XPathConstants.STRING),
-                (String)humidityExp.evaluate(doc, XPathConstants.STRING),
-                (String)pressureExp.evaluate(doc, XPathConstants.STRING),
-                (String)windExp.evaluate(doc, XPathConstants.STRING),
-                (String)weatherExp.evaluate(doc, XPathConstants.STRING)
-                );
+
+            WeatherNow = new State((String) tempExp.evaluate(doc, XPathConstants.STRING),
+                    (String) minExp.evaluate(doc, XPathConstants.STRING),
+                    (String) maxExp.evaluate(doc, XPathConstants.STRING),
+                    (String) humidityExp.evaluate(doc, XPathConstants.STRING),
+                    (String) pressureExp.evaluate(doc, XPathConstants.STRING),
+                    (String) windExp.evaluate(doc, XPathConstants.STRING),
+                    (String) weatherExp.evaluate(doc, XPathConstants.STRING)
+            );
             WeatherNow.setCoordinate(CoordinatePlace);
             System.out.println(WeatherNow);
         } catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException ex) {
@@ -77,24 +96,29 @@ public class Reader {
             exit(2);
         }
     }
-    
-    private void readSettings(){
+
+    private void readSettings() {
         try {
-            BufferedReader br = new BufferedReader(new FileReader("weatherconfig.txt"));
-            apikey = br.readLine();
-            br.close();
+            try (BufferedReader br = new BufferedReader(new FileReader("weatherconfig.txt"))) {
+                apikey = br.readLine();
+            }
         } catch (FileNotFoundException ex) {
-            System.out.println("Weather configuration file is missing!"+"\n"+"Can't check weather conditions.");
+            System.out.println("Weather configuration file is missing!" + "\n" + "Can't check weather conditions.");
             exit(2);
         } catch (IOException ex) {
-           System.out.println("There was a problem retrieving data from Open Weather. Sorry!");
-           System.out.println("Here some data for nerds:");
-           Logger.getLogger(Weather.Reader.class.getName()).log(Level.SEVERE, null, ex);
-           exit(2);
+            System.out.println("There was a problem retrieving data from Open Weather. Sorry!");
+            System.out.println("Here some data for nerds:");
+            Logger.getLogger(Weather.Reader.class.getName()).log(Level.SEVERE, null, ex);
+            exit(2);
         }
     }
-    
-    public State getState(){
+
+    /**
+     * Get the state object representing weather
+     *
+     * @return State actual weather
+     */
+    public State getState() {
         return WeatherNow;
     }
 }

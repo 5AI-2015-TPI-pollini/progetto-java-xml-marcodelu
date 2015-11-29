@@ -1,26 +1,34 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Maps;
 
 /**
+ * Exception throwed when an address isn't found in Google Maps database.
  *
- * @author Marco De Lucchi <marcodelucchi27@gmail.com>
+ * @author Marco De Lucchi
  */
-public class NotFoundException extends Exception{
-    private String address;
-    
-    public NotFoundException(String address){
+public class NotFoundException extends Exception {
+
+    private final String address;
+
+    /**
+     * Inizialize exception
+     *
+     * @param address address that throwed exception
+     */
+    public NotFoundException(String address) {
         this.address = address;
     }
-    
-    public String toString(){
+
+    @Override
+    public String toString() {
         return "Can't find this address: " + address;
     }
-    
-    public String getAddress(){
+
+    /**
+     * Get the address that throwed the exception
+     *
+     * @return address
+     */
+    public String getAddress() {
         return address;
     }
 }

@@ -1,9 +1,6 @@
 package deluweather;
 
 import Maps.NotFoundException;
-import java.awt.Button;
-import java.awt.event.ActionEvent;
-import java.beans.EventHandler;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,16 +10,22 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 /**
+ * Main Class
  *
- * @author Marco De Lucchi <marcodelucchi27@gmail.com>
+ * @author Marco De Lucchi
  */
-public class DeluWeather extends Application{
+public class DeluWeather extends Application {
+
+    /**
+     * Main
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         try {
             launch(args);
@@ -38,18 +41,18 @@ public class DeluWeather extends Application{
     public void start(Stage primaryStage) throws Exception {
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         Parent root = FXMLLoader.load(getClass().getResource("WeatherGUI.fxml"));
-        Scene scene = new Scene(root,Color.TRANSPARENT);
+        Scene scene = new Scene(root, Color.TRANSPARENT);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-    
-    private static void noGraphic(){
+
+    private static void noGraphic() {
         try {
             System.out.println("Welcome! Please write the address:");
             //Read input
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             String address = br.readLine();
-            
+
             //Create Object
             Maps.Reader GMR = new Maps.Reader(address);
             Weather.Reader OPW = new Weather.Reader(GMR.getCoordinate());
