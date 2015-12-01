@@ -1,7 +1,6 @@
 package Weather;
 
 import Maps.Coordinate;
-import Http.Connection;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,7 +18,11 @@ import Http.Connection;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import static java.lang.System.exit;
+import java.util.Optional;
+import javafx.scene.control.TextInputDialog;
 
 /**
  * Handle Open Weather request
@@ -97,22 +100,48 @@ public class Reader {
         }
     }
 
+    /**
+     * Read api key from configuration file
+     */
     private void readSettings() {
-        try {
-            try (BufferedReader br = new BufferedReader(new FileReader("weatherconfig.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("weather.config"))) {
                 apikey = br.readLine();
-            }
         } catch (FileNotFoundException ex) {
-            System.out.println("Weather configuration file is missing!" + "\n" + "Can't check weather conditions.");
-            exit(2);
+            configurationFileMissing();
         } catch (IOException ex) {
-            System.out.println("There was a problem retrieving data from Open Weather. Sorry!");
-            System.out.println("Here some data for nerds:");
-            Logger.getLogger(Weather.Reader.class.getName()).log(Level.SEVERE, null, ex);
-            exit(2);
+            exit(4);
         }
     }
 
+    /**
+     * Handle the exception about missing configuration file
+     */
+    private void configurationFileMissing(){
+        TextInputDialog dialog = new TextInputDialog("Open Weather API");
+        dialog.setTitle("Open Weather API");
+        dialog.setHeaderText("Can't find weather configuration. \n"
+                + "I need the Api Key for retrieving data from OpenWeather.\n"
+                + "Please check DeluWeather's documentation and provide a valid key.");
+        dialog.setContentText("Api Key:");
+
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()){
+            apikey = result.get();
+        }
+        writeSettings();
+    }
+    
+    /**
+     * Write api key
+     */
+    private void writeSettings(){
+        try (PrintWriter pw = new PrintWriter ("weather.config", "UTF-8")){
+            pw.println(apikey);
+            pw.close();
+        } catch (FileNotFoundException | UnsupportedEncodingException ex) {
+            exit(5);
+        }
+    }
     /**
      * Get the state object representing weather
      *
