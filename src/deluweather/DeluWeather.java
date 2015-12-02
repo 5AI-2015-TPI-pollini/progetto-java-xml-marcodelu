@@ -31,6 +31,12 @@ public class DeluWeather extends Application {
         }
     }
 
+    /**
+     * Method for starting GUI
+     *
+     * @param primaryStage
+     * @throws Exception
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("WeatherGUI.fxml"));

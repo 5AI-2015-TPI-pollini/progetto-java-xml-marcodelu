@@ -22,6 +22,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import static java.lang.System.exit;
 import java.util.Optional;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextInputDialog;
 
 /**
@@ -105,7 +106,7 @@ public class Reader {
      */
     private void readSettings() {
         try (BufferedReader br = new BufferedReader(new FileReader("weather.config"))) {
-                apikey = br.readLine();
+            apikey = br.readLine();
         } catch (FileNotFoundException ex) {
             configurationFileMissing();
         } catch (IOException ex) {
@@ -116,7 +117,7 @@ public class Reader {
     /**
      * Handle the exception about missing configuration file
      */
-    private void configurationFileMissing(){
+    private void configurationFileMissing() {
         TextInputDialog dialog = new TextInputDialog("Open Weather API");
         dialog.setTitle("Open Weather API");
         dialog.setHeaderText("Can't find weather configuration. \n"
@@ -125,23 +126,24 @@ public class Reader {
         dialog.setContentText("Api Key:");
 
         Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()){
+        if (result.isPresent()) {
             apikey = result.get();
         }
         writeSettings();
     }
-    
+
     /**
      * Write api key
      */
-    private void writeSettings(){
-        try (PrintWriter pw = new PrintWriter ("weather.config", "UTF-8")){
-            pw.println(apikey);
+    private void writeSettings() {
+        try (PrintWriter pw = new PrintWriter("weather.config", "UTF-8")) {
+            pw.print(apikey);
             pw.close();
         } catch (FileNotFoundException | UnsupportedEncodingException ex) {
             exit(5);
         }
     }
+
     /**
      * Get the state object representing weather
      *

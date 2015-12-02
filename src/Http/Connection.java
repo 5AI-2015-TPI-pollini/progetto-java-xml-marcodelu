@@ -31,12 +31,13 @@ import javafx.scene.layout.GridPane;
  *
  * @author Marco De Lucchi
  */
-public class Connection {
+public class Connection extends Thread {
 
     private final String url;
     private InputStream output;
     private String proxyAddress, proxyPort, authUser, authPassword;
     private Boolean proxyOn;
+    private Alert alert;
 
     /**
      * Create connection to a website
@@ -46,7 +47,16 @@ public class Connection {
     public Connection(String url) {
         this.url = url;
         proxyOn = false;
+
+        alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Connection in progress");
+        alert.setHeaderText("Please wait...");
+        alert.setContentText("Looking for the address...");
+        alert.show();
+
         connect();
+
+        alert.close();
     }
 
     private void connect() {
@@ -73,7 +83,7 @@ public class Connection {
     /**
      * Analyze why software can't reach Internet
      */
-    private void cantconnect(){
+    private void cantconnect() {
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Can't connect to Internet");
         alert.setHeaderText("I wasn't able to connect to Internt.");
@@ -86,53 +96,41 @@ public class Connection {
         alert.getButtonTypes().setAll(buttonTryAgain, buttonSetProxy, buttonTypeCancel);
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == buttonTryAgain){
+        if (result.get() == buttonTryAgain) {
             connect();
         } else if (result.get() == buttonSetProxy) {
             proxyOn = true;
             setProxy();
+            connect();
         } else {
             exit(2);
         }
     }
-    
+
     /**
      * Set a proxy for the connection
      */
     private void setProxy() {
-        try {
-            readSettings();
-            Authenticator.setDefault(
-                    new Authenticator() {
-                        @Override
-                        public PasswordAuthentication getPasswordAuthentication() {
-                            return new PasswordAuthentication(
-                                    authUser, authPassword.toCharArray());
-                        }
+        readSettings();
+        Authenticator.setDefault(
+                new Authenticator() {
+                    @Override
+                    public PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(
+                                authUser, authPassword.toCharArray());
                     }
-            );
-            System.setProperty("http.proxyUser", authUser);
-            System.setProperty("http.proxyPassword", authPassword);
-            System.setProperty("http.proxyHost", proxyAddress);
-            System.setProperty("http.proxyPort", proxyPort);
-            
-            /**
-             *  Try connection
-             */
-            URL URLInput = new URL("google.com");
-            URLConnection ConnectionInput = URLInput.openConnection();
-            output = new BufferedInputStream(ConnectionInput.getInputStream());
-        } catch (MalformedURLException ex) {
-            cantconnect();
-        } catch (IOException ex) {
-            cantconnect();
-        }
+                }
+        );
+        System.setProperty("http.proxyUser", authUser);
+        System.setProperty("http.proxyPassword", authPassword);
+        System.setProperty("http.proxyHost", proxyAddress);
+        System.setProperty("http.proxyPort", proxyPort);
     }
 
     /**
-     *  If configuration file is missing, will ask user for insert configuration
+     * If configuration file is missing, will ask user for insert configuration
      */
-    private void missingConfigurationProxy(){
+    private void missingConfigurationProxy() {
         Dialog<String[]> dialog = new Dialog<>();
         dialog.setTitle("Login Dialog");
         dialog.setHeaderText("Please insert proxy configuration");
@@ -175,7 +173,7 @@ public class Connection {
             }
             return null;
         });
-        
+
         Optional<String[]> result = dialog.showAndWait();
         result.ifPresent(configuration -> {
             proxyAddress = configuration[0];
@@ -185,7 +183,7 @@ public class Connection {
         });
         writeSettings();
     }
-    
+
     /**
      * Read proxy configuration file
      */
@@ -195,18 +193,18 @@ public class Connection {
             proxyPort = br.readLine();
             authUser = br.readLine();
             authPassword = br.readLine();
-        }catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException ex) {
             missingConfigurationProxy();
         } catch (IOException ex) {
             cantconnect();
         }
     }
-    
+
     /**
      * Write proxy configuration file
      */
-    private void writeSettings(){
-        try (PrintWriter pw = new PrintWriter ("proxy.config", "UTF-8")){
+    private void writeSettings() {
+        try (PrintWriter pw = new PrintWriter("proxy.config", "UTF-8")) {
             pw.println(proxyAddress);
             pw.println(proxyPort);
             pw.println(authUser);
