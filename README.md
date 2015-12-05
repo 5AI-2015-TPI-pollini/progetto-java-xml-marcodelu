@@ -1,9 +1,12 @@
-# WeatherProject
-This is the branch dedicated to GitHub Pages of WeatherProject which is a software that searches for an address and shows the weather informations.
-You can find the Stable version at: http://5ai-2015-tpi-pollini.github.io/progetto-java-xml-simonedegiacomi/
+# DeluWeather
+## What is
+DeluWather is the result of a task assigned by Prof. Pollini Andrea for the school year 2015/16.
+It's a program that checks the weather for an address inserted by the user.
 
+## How does it work
+DeluWeather works using Google Maps and OpenWeather APIs for retrieving data in XML, after it shows the result on screen using JavaFX.
 
-## How does it work?
-The software uses JavaFX to provide a GUI and Google GeoCode API to search the coordinates of the given address. Once the coordinates are found, the weather informations are retrieved from OpenWeatherMap.
-## Official Wiki
-Visit out Official wiki at: https://github.com/5AI-2015-TPI-pollini/progetto-java-xml-simonedegiacomi/wiki
+## Links
+Wiki:     http://github.com/5AI-2015-TPI-pollini/progetto-java-xml-marcodelu/wiki
+
+Web Site: http://5ai-2015-tpi-pollini.github.io/progetto-java-xml-marcodelu/
