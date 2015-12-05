@@ -31,7 +31,7 @@ import javafx.scene.layout.GridPane;
  *
  * @author Marco De Lucchi
  */
-public class Connection extends Thread {
+public class Connection {
 
     private final String url;
     private InputStream output;
@@ -86,7 +86,7 @@ public class Connection extends Thread {
     private void cantconnect() {
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Can't connect to Internet");
-        alert.setHeaderText("I wasn't able to connect to Internt.");
+        alert.setHeaderText("I wasn't able to connect to Internet.");
         alert.setContentText("Maybe are you under a proxy connection?");
 
         ButtonType buttonTryAgain = new ButtonType("Try again");
